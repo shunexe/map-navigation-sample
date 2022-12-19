@@ -5,7 +5,6 @@ import Map, {
   Marker,
   MarkerDragEvent,
   NavigationControl,
-  Popup,
   Source,
   useMap
 } from "react-map-gl";
@@ -47,12 +46,10 @@ const HomeContent = () => {
   const [routeGeoJson, setRouteGeoJson] = useState<Feature>();
   const [isNavigationMode, setIsNavigationMode] = useState(false)
   const [currentUserPosition, setCurrentUserPosition] = useState<LatLng | null>(null);
-  const [instructions, setInstructions] = useState<string[]>([])
 
   const getCurrentPosition = (): Promise<{ lat: number, lng: number }> => {
     return new Promise<{ lat: number, lng: number }>((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(position => {
-          console.log(position.coords.accuracy)
           const {latitude, longitude} = position.coords;
           resolve({lat: latitude, lng: longitude})
         },
@@ -111,8 +108,6 @@ const HomeContent = () => {
         const json = await query.json();
         const data = json.routes[0];
         const route = data.geometry.coordinates;
-        const instructions = data.legs.flatMap((item: any) => item.steps.map((step: any) => step.maneuver.instruction))
-        setInstructions(instructions)
         const geojson = {
           type: 'Feature' as const,
           properties: {},
@@ -153,23 +148,6 @@ const HomeContent = () => {
         </div>
         <span>Drop the destination pin by clicking on the map. You can also drop a draggable waypoint pin by enabling it.</span>
       </div>
-      {/*{isNavigationMode &&*/}
-      {/*<div style={{*/}
-      {/*  position: 'absolute',*/}
-      {/*  top: 5,*/}
-      {/*  left: 0,*/}
-      {/*  width: '20%',*/}
-      {/*  height: '50%',*/}
-      {/*  background: '#fff',*/}
-      {/*  zIndex: 1,*/}
-      {/*  overflowY: "scroll"*/}
-      {/*}}>*/}
-      {/*  <div style={{marginBottom: 10}}>Instruction</div>*/}
-      {/*  {instructions.map((item, index) => {*/}
-      {/*    return <div key={index}>{index + 1}.{item}</div>*/}
-      {/*  })}*/}
-      {/*</div>*/}
-      {/*}*/}
       {currentUserPosition &&
       <Map
         id='myMap'
@@ -178,7 +156,6 @@ const HomeContent = () => {
           latitude: currentUserPosition.lat,
           zoom: 14,
         }}
-        interactive={true}
         style={{width: '100%', height: '100vh'}}
         mapStyle={"mapbox://styles/mapbox/light-v10"}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAP_BOX_TOKEN}
