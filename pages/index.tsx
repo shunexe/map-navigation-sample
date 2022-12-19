@@ -1,4 +1,14 @@
-import Map, {Layer, LayerProps, MapProvider, Marker, NavigationControl, Popup, Source, useMap} from "react-map-gl";
+import Map, {
+  Layer,
+  LayerProps,
+  MapProvider,
+  Marker,
+  MarkerDragEvent,
+  NavigationControl,
+  Popup,
+  Source,
+  useMap
+} from "react-map-gl";
 import {ChangeEvent, useEffect, useState} from "react";
 import {Feature} from "geojson";
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -74,6 +84,12 @@ const HomeContent = () => {
     setWaypoint({lng: center.lng + 0.001, lat: center.lat + 0.001})
   }
 
+  const onDragWaypoint = (e:MarkerDragEvent)=>{
+    setIsNavigationMode(false)
+    setRouteGeoJson(undefined)
+    setWaypoint(e.lngLat)
+  }
+
   useEffect(() => {
     getCurrentPosition().then(setCurrentUserPosition).catch(setCurrentUserPosition)
   }, [])
@@ -108,7 +124,7 @@ const HomeContent = () => {
         setRouteGeoJson(geojson);
         myMap.fitBounds(bbox(geojson) as [number, number, number, number], {
           duration: 1000,
-          padding: 100
+          padding: 200
         })
       })();
     }
@@ -162,6 +178,7 @@ const HomeContent = () => {
           latitude: currentUserPosition.lat,
           zoom: 14,
         }}
+        interactive={true}
         style={{width: '100%', height: '100vh'}}
         mapStyle={"mapbox://styles/mapbox/light-v10"}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAP_BOX_TOKEN}
@@ -185,7 +202,7 @@ const HomeContent = () => {
         </Marker>
         }
         {useWayPoint && waypoint &&
-        <Marker draggable={true} onDrag={(e) => setWaypoint(e.lngLat)} key={'dummyWaypoint'} longitude={waypoint.lng}
+        <Marker draggable={true} onDrag={onDragWaypoint} key={'dummyWaypoint'} longitude={waypoint.lng}
                 latitude={waypoint.lat} anchor="center">
           <Pin color={'green'}/>
         </Marker>
