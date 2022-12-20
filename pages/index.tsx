@@ -49,7 +49,6 @@ const HomeContent = () => {
 
   const getCurrentPosition = (): Promise<{ lat: number, lng: number }> => {
     return new Promise<{ lat: number, lng: number }>((resolve, reject) => {
-      if(window.location.hostname==='localhost') resolve(defaultPosition)
       navigator.geolocation.getCurrentPosition(position => {
           const {latitude, longitude} = position.coords;
           resolve({lat: latitude, lng: longitude})
