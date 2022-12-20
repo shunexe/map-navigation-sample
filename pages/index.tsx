@@ -49,6 +49,7 @@ const HomeContent = () => {
 
   const getCurrentPosition = (): Promise<{ lat: number, lng: number }> => {
     return new Promise<{ lat: number, lng: number }>((resolve, reject) => {
+      if(window.location.hostname==='localhost') resolve(defaultPosition)
       navigator.geolocation.getCurrentPosition(position => {
           const {latitude, longitude} = position.coords;
           resolve({lat: latitude, lng: longitude})
@@ -130,7 +131,7 @@ const HomeContent = () => {
       <div style={{padding: 8, display: 'flex', alignItems: 'center', gap: 10}}>
         <div style={{display:'flex',gap:4}}>
           <p>By</p>
-          <select onChange={(e) => setProfile(e.target.value as Profile)}>
+          <select defaultValue={profile} onChange={(e) => setProfile(e.target.value as Profile)}>
           <option value="walking">walking</option>
           <option value="driving">car</option>
           </select>
